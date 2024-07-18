@@ -13,12 +13,12 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="​	本人刚开始刷LeetCode时，常常会想彻底理解某题的某个解法或者某个概念，本文是对该题为何使用滑动窗口算法以及使用滑动窗口算法优势的一些思考与分享。个人认为之所以滑动窗口能够提升效率的原因就在于能够用上每一轮循环比较产生的信息，而这是暴力循环没有做到的。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/Users/zhangyiyan/Documents/blog/7%E6%9C%8818%E6%97%A5lc209.png">
+<meta property="og:image" content="http://example.com/lc209-%E5%85%B3%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%80%E5%B0%8F%E8%BF%9E%E7%BB%AD%E5%AD%90%E5%BA%8F%E5%88%97%E7%9A%84%E7%90%86%E8%A7%A3_photo/7%E6%9C%8818%E6%97%A5lc209%E7%9A%84%E5%89%AF%E6%9C%AC.png">
 <meta property="article:published_time" content="2024-07-18T12:14:49.000Z">
-<meta property="article:modified_time" content="2024-07-18T13:54:22.799Z">
+<meta property="article:modified_time" content="2024-07-18T14:13:01.164Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/Users/zhangyiyan/Documents/blog/7%E6%9C%8818%E6%97%A5lc209.png">
+<meta name="twitter:image" content="http://example.com/lc209-%E5%85%B3%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%80%E5%B0%8F%E8%BF%9E%E7%BB%AD%E5%AD%90%E5%BA%8F%E5%88%97%E7%9A%84%E7%90%86%E8%A7%A3_photo/7%E6%9C%8818%E6%97%A5lc209%E7%9A%84%E5%89%AF%E6%9C%AC.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -101,7 +101,7 @@
 <p>先附上我的代码。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minSubArrayLen</span><span class="params">(<span class="type">int</span> target, vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> start = <span class="number">0</span> , end = <span class="number">0</span> , sum = <span class="number">0</span>; </span><br><span class="line">        <span class="type">int</span> ans = nums.<span class="built_in">size</span>() + <span class="number">1</span>; </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span> ; i &lt; nums.<span class="built_in">size</span>() ; i++)&#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">            <span class="keyword">if</span> (sum &gt;= target)&#123;<span class="comment">//右移边界是否满足条件</span></span><br><span class="line">                <span class="keyword">while</span>((sum - nums[start]) &gt;= target)&#123;<span class="comment">//当前状态已经满足条件，进行左缩优化判定</span></span><br><span class="line">                    sum -= nums[start];</span><br><span class="line">                    start += <span class="number">1</span>;</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">&quot;start is %d end is %d\n&quot;</span>, start ,i);</span><br><span class="line">            &#125;</span><br><span class="line">            ans = <span class="built_in">min</span>(ans , i - start <span class="number">+1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (sum &lt; target)&#123;<span class="keyword">return</span> ans = <span class="number">0</span>;&#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<h2 id="滑动窗口的做法与暴力解法的比较与优化"><a href="#滑动窗口的做法与暴力解法的比较与优化" class="headerlink" title="滑动窗口的做法与暴力解法的比较与优化"></a>滑动窗口的做法与暴力解法的比较与优化</h2><p>​	大家都知道这题用双指针即滑动窗口的做法解决，但是可能并不是那么清楚优化在了哪？为什么滑动窗口会比暴力更快？具体快在了哪？能否有一个直观表达？先回顾一下这两种解法。以209的示例一为例。<img src="/Users/zhangyiyan/Documents/blog/7月18日lc209.png"  /></p>
+<h2 id="滑动窗口的做法与暴力解法的比较与优化"><a href="#滑动窗口的做法与暴力解法的比较与优化" class="headerlink" title="滑动窗口的做法与暴力解法的比较与优化"></a>滑动窗口的做法与暴力解法的比较与优化</h2><p>​	大家都知道这题用双指针即滑动窗口的做法解决，但是可能并不是那么清楚优化在了哪？为什么滑动窗口会比暴力更快？具体快在了哪？能否有一个直观表达？先回顾一下这两种解法。以209的示例一为例。<img src="/./lc209-%E5%85%B3%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%80%E5%B0%8F%E8%BF%9E%E7%BB%AD%E5%AD%90%E5%BA%8F%E5%88%97%E7%9A%84%E7%90%86%E8%A7%A3_photo/7%E6%9C%8818%E6%97%A5lc209%E7%9A%84%E5%89%AF%E6%9C%AC.png"></p>
 <h3 id="暴力解法"><a href="#暴力解法" class="headerlink" title="暴力解法"></a>暴力解法</h3><p>​	这个不必多说两重循环即可。使用暴力解法就是将所有情况枚举，这里列举一下暴力做法的所有情况。</p>
 <table>
 <thead>
@@ -389,6 +389,15 @@
     
 <nav id="article-nav">
   
+    <a href="/2024/07/18/test/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          test
+        
+      </div>
+    </a>
+  
   
     <a href="/2024/07/18/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
@@ -428,6 +437,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2024/07/18/test/">test</a>
+          </li>
         
           <li>
             <a href="/2024/07/18/lc209-%E5%85%B3%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%80%E5%B0%8F%E8%BF%9E%E7%BB%AD%E5%AD%90%E5%BA%8F%E5%88%97%E7%9A%84%E7%90%86%E8%A7%A3/">lc209-关于滑动窗口原理与最小连续子序列的理解</a>
